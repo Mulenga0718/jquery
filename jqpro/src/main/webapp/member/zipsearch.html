@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/public.css">
+<script src="http://localhost/jqpro/js/jquery-3.6.0.min.js"></script>
+<style type="text/css">
+	#dong{
+		margin-left : 20px;
+	}
+	.ziptr:hover{
+		background : grey;
+	}
+</style>
+<script>
+$(function(){
+	$('#btn1').on('click', function(){
+			//입력한 값을 가져온다.
+			dongvalue = $('#dong').val().trim();
+
+			//서버로 전송
+			$.ajax({
+				url: '/jqpro/ZipSearch.do',
+				type: 'get',
+				data: {'dong' : dongvalue},
+				success : function(res){
+					str = "<table border ='1'>";
+					str += "<tr><td>우편번호</td>";
+					str += "<td>주소</td>";
+					str += "<td>번지</td></tr>";
+					
+					$.each(res, function(i, v){
+					str += "<tr class ='ziptr'><td>"+v.zipcode+"</td>";
+					str += "<td>"+v.sido+v.gugun+v.dong+"</td>";
+					
+					if(typeof v.bunji != 'undefined'){
+					str += "<td>"+v.bunji+"</td></tr>";}
+					else{str+="<td></td></tr>"}
+					})
+					str+="</table>"
+					$('#result1').html(str);
+					
+					
+					
+					
+				},
+				error : function(xhr){
+					alert("상태 : "+xhr.status);
+				},
+				dataType: 'json'
+			})
+
+	})
+	$(document).on('click', '.ziptr', function(){
+		zipcode = $('td:eq(0)', this).text();
+		addr = $('td:eq(1)',this).text();
+		
+		$('#zcode', opener.document).val(zipcode);
+		$('#addr', opener.document).val(addr);
+		
+		window.close();
+		
+	})
+})
+
+</script>
+</head>
+<body>
+
+<div class="box">
+동입력 <input type="text" id="dong">
+<input type="button" value="확인" id ="btn1">
+<div id="result1"></div>
+</div>
+</body>
+</html>
